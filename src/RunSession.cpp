@@ -1,45 +1,51 @@
 #include <iostream>
 #include "RunSession.h"
 
-RunSession::RunSession(std::unique_ptr<IInputGenerator> ig,
-                       std::unique_ptr<IScoringRule> sr,
-                       std::unique_ptr<IRewardRule> rr)
-    : inputGenerator(std::move(ig)),
-      scoringRule(std::move(sr)),
-      rewardRule(std::move(rr)),
+RunSession::RunSession(
+    IInputGenerator& inputGenerator,
+    IScoringRule& scoringRule,
+    IRewardRule& rewardRule,
+    ShopSystem& shopSystem
+)
+    : inputGenerator(inputGenerator),
+      scoringRule(scoringRule),
+      rewardRule(rewardRule),
+      shopSystem(shopSystem),
       currentRound(1),
       money(0) {}
 
+void RunSession::advanceRound() {
+    std::cout << "[ROUND] Advancing from round " << currentRound << std::endl;
+    currentRound++;
+}
+
 void RunSession::run() {
-    std::cout << "=== RUN START ===\n";
+    std::cout << "=== RUN START ===" << std::endl;
 
-    while (currentRound <= 3) {
-        std::cout << "Round " << currentRound << "\n";
+    while (currentRound <= TOTAL_ROUNDS) {
+        std::cout << "Round " << currentRound << std::endl;
 
-        // 1. Generate input
-        TurnInput input = inputGenerator->generateInput(currentRound);
-        std::cout << "[PLAY] input generated: " << input.value << "\n";
+        TurnInput input = inputGenerator.generate(currentRound);
+        std::cout << "[PLAY] Input generated: " << input.value << std::endl;
 
-        // 2. Compute base score
-        int baseScore = scoringRule->computeBaseScore(input);
-        std::cout << "[SCORE] base score: " << baseScore << "\n";
+        int baseScore = scoringRule.computeBaseScore(input, currentRound);
+        std::cout << "[SCORE] Base score: " << baseScore << std::endl;
 
-        // 3. Compute reward
-        int reward = rewardRule->computeReward(baseScore, currentRound);
+        int reward = rewardRule.computeReward(baseScore, currentRound);
+        std::cout << "[REWARD] Reward gained: " << reward << std::endl;
 
-        // 4. Update money
         money += reward;
-        std::cout << "[REWARD] gain: " << reward
-                  << " | money: " << money << "\n";
+        std::cout << "[MONEY] Total money: " << money << std::endl;
 
-        // 5. Shop phase
-        shopSystem.showShopOffer();
+        shopSystem.showOffer(currentRound, money);
 
-        // 6. Advance round
-        currentRound++;
-        std::cout << "\n";
+        advanceRound();
+
+        if (currentRound <= TOTAL_ROUNDS) {
+            std::cout << std::endl;
+        }
     }
 
-    std::cout << "=== RUN END ===\n";
-    std::cout << "Final money: " << money << "\n";
+    std::cout << "=== RUN END ===" << std::endl;
+    std::cout << "Final money: " << money << std::endl;
 }

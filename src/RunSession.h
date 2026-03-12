@@ -1,7 +1,6 @@
-#ifndef RUNSESSION_H
-#define RUNSESSION_H
+#ifndef RUN_SESSION_H
+#define RUN_SESSION_H
 
-#include <memory>
 #include "IInputGenerator.h"
 #include "IScoringRule.h"
 #include "IRewardRule.h"
@@ -9,18 +8,25 @@
 
 class RunSession {
 private:
-    std::unique_ptr<IInputGenerator> inputGenerator;
-    std::unique_ptr<IScoringRule> scoringRule;
-    std::unique_ptr<IRewardRule> rewardRule;
-    ShopSystem shopSystem;
+    static const int TOTAL_ROUNDS = 3;
+
+    IInputGenerator& inputGenerator;
+    IScoringRule& scoringRule;
+    IRewardRule& rewardRule;
+    ShopSystem& shopSystem;
 
     int currentRound;
     int money;
 
+    void advanceRound();
+
 public:
-    RunSession(std::unique_ptr<IInputGenerator> ig,
-               std::unique_ptr<IScoringRule> sr,
-               std::unique_ptr<IRewardRule> rr);
+    RunSession(
+        IInputGenerator& inputGenerator,
+        IScoringRule& scoringRule,
+        IRewardRule& rewardRule,
+        ShopSystem& shopSystem
+    );
 
     void run();
 };

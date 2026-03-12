@@ -1,23 +1,17 @@
-#include <memory>
-#include "RunSession.h"
-//#include "RandomInputGenerator.h"
+#include <vector>
+#include "FixedInputGenerator.h"
 #include "BasicScoringRule.h"
-//#include "BasicRewardRule.h"
+#include "BasicRewardRule.h"
+#include "ShopSystem.h"
+#include "RunSession.h"
 
 int main() {
-   // std::unique_ptr<IInputGenerator> inputGen =
-        std::make_unique<RandomInputGenerator>();
+    FixedInputGenerator inputGenerator({3, 5, 2});
+    BasicScoringRule scoringRule;
+    BasicRewardRule rewardRule;
+    ShopSystem shopSystem;
 
-    std::unique_ptr<IScoringRule> scoring =
-        std::make_unique<BasicScoringRule>();
-
-    //std::unique_ptr<IRewardRule> reward =
-        std::make_unique<BasicRewardRule>();
-
-    RunSession session(std::move(inputGen),
-                       std::move(scoring),
-                       //std::move(reward));
-
+    RunSession session(inputGenerator, scoringRule, rewardRule, shopSystem);
     session.run();
 
     return 0;
