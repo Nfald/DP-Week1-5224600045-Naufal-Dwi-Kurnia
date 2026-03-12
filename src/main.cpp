@@ -1,14 +1,13 @@
-#include <vector>
-#include "FixedInputGenerator.h"
+#include "RandomInputGenerator.h"
 #include "BasicScoringRule.h"
-#include "BasicRewardRule.h"
+#include "BonusRewardRule.h"
 #include "ShopSystem.h"
 #include "RunSession.h"
 
 int main() {
-    FixedInputGenerator inputGenerator({3, 5, 2});
+    RandomInputGenerator inputGenerator;
     BasicScoringRule scoringRule;
-    BasicRewardRule rewardRule;
+    BonusRewardRule rewardRule;
     ShopSystem shopSystem;
 
     RunSession session(inputGenerator, scoringRule, rewardRule, shopSystem);
